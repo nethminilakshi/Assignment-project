@@ -5,7 +5,7 @@ import com.example.layeredarchitecture.db.DBConnection;
 import java.sql.*;
 import java.time.LocalDate;
 
-public class OrderDAOImpl {
+public class OrderDAOImpl implements OrderDAO{
 
     public String getNewId() throws SQLException, ClassNotFoundException {
 
@@ -36,7 +36,7 @@ public class OrderDAOImpl {
        return stm;
     }
 
-public void getOrderId(String orderId) throws SQLException, ClassNotFoundException {
+    public void getOrderId(String orderId) throws SQLException, ClassNotFoundException {
     Connection connection = DBConnection.getDbConnection().getConnection();
     PreparedStatement stm = connection.prepareStatement("SELECT oid FROM `Orders` WHERE oid=?");
     stm.setString(1, orderId);

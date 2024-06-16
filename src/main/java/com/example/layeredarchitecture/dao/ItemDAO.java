@@ -18,4 +18,8 @@ public interface ItemDAO {
     public  boolean getExitItemCode(String code) throws SQLException, ClassNotFoundException;
 
     public String getNextId() throws SQLException, ClassNotFoundException;
+    public ItemDTO FindItems(String code) throws SQLException, ClassNotFoundException ;
+
+    public boolean searchAndUpdate(ItemDTO item) throws SQLException, ClassNotFoundException ;
+
 }

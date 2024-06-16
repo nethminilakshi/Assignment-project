@@ -1,9 +1,6 @@
 package com.example.layeredarchitecture.controller;
 
-import com.example.layeredarchitecture.dao.CustomerDAOImpl;
-import com.example.layeredarchitecture.dao.ItemDAOImpl;
-import com.example.layeredarchitecture.dao.OrderDAOImpl;
-import com.example.layeredarchitecture.dao.OrderDetailsDAOImpl;
+import com.example.layeredarchitecture.dao.*;
 import com.example.layeredarchitecture.db.DBConnection;
 import com.example.layeredarchitecture.model.CustomerDTO;
 import com.example.layeredarchitecture.model.ItemDTO;
@@ -54,7 +51,10 @@ public class PlaceOrderFormController {
     public Label lblDate;
     public Label lblTotal;
     private String orderId;
-
+    ItemDAO itemDAO = new ItemDAOImpl();
+    CustomerDAO customerDAO = new CustomerDAOImpl();
+    OrderDetailDAO orderDetailsDAO = new OrderDetailsDAOImpl();
+    OrderDAO orderDAO = new OrderDAOImpl();
     public void initialize() throws SQLException, ClassNotFoundException {
 
         tblOrderDetails.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("code"));
@@ -191,21 +191,19 @@ public class PlaceOrderFormController {
 
     private boolean existItem(String code) throws SQLException, ClassNotFoundException {
 
-        ItemDAOImpl itemDAO = new ItemDAOImpl();
         boolean isExist = itemDAO.getExitItemCode(code);
         return isExist;
     }
 
     boolean existCustomer(String id) throws SQLException, ClassNotFoundException {
 
-        CustomerDAOImpl customerDAO = new CustomerDAOImpl();
         boolean IsExistCustomer = customerDAO.IsExist(id);
         return IsExistCustomer;
     }
 
     public String generateNewOrderId() {
         try {
-            OrderDAOImpl orderDAO = new OrderDAOImpl();
+            OrderDAO orderDAO = new OrderDAOImpl();
             return orderDAO.getNewId();
 
         } catch (SQLException e) {
@@ -218,7 +216,6 @@ public class PlaceOrderFormController {
 
     private void loadAllCustomerIds() {
         try {
-            CustomerDAOImpl customerDAO = new CustomerDAOImpl();
             ArrayList<CustomerDTO> customerDTOS = customerDAO.loadAllCostomers();
 
             for (CustomerDTO customerDTO : customerDTOS) {
@@ -235,7 +232,6 @@ public class PlaceOrderFormController {
     private void loadAllItemCodes() {
         try {
             /*Get all items*/
-            ItemDAOImpl itemDAO = new ItemDAOImpl();
             ArrayList<ItemDTO> itemDTOS = itemDAO.loadAllItems();
 
             for (ItemDTO itemDTO : itemDTOS) {
@@ -340,19 +336,18 @@ public class PlaceOrderFormController {
         try {
             Connection connection = DBConnection.getDbConnection().getConnection();
 
-            OrderDAOImpl OrderDAO = new OrderDAOImpl();
-            OrderDAO.getOrderId(orderId);
+            orderDAO.getOrderId(orderId);
 
             connection.setAutoCommit(false);
 
-            PreparedStatement pstm = OrderDAO.saveOrders(orderId, orderDate, customerId);
+            PreparedStatement pstm = orderDAO.saveOrders(orderId, orderDate, customerId);
             if (pstm.executeUpdate() != 1) {
                 connection.rollback();
                 connection.setAutoCommit(true);
                 return false;
             }
 
-                OrderDetailsDAOImpl orderDetailsDAO = new OrderDetailsDAOImpl();
+
                 boolean isOrderSaved = orderDetailsDAO.saveOrderDetails(orderId, orderDetails);
             if (!isOrderSaved) {
                 connection.rollback();
@@ -367,7 +362,6 @@ public class PlaceOrderFormController {
             ItemDTO item = findItem(detail.getItemCode());
             item.setQtyOnHand(item.getQtyOnHand() - detail.getQty());
 
-            ItemDAOImpl itemDAO=new ItemDAOImpl();
             Boolean itemUpdate=itemDAO.searchAndUpdate(item);
                 if (!itemUpdate) {
                     connection.rollback();
@@ -394,7 +388,6 @@ public class PlaceOrderFormController {
     public ItemDTO findItem(String code) {
 
         try {
-            ItemDAOImpl itemDAO = new ItemDAOImpl();
             ItemDTO itemDTO = itemDAO.FindItems(code);
             return itemDTO;
 

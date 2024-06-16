@@ -374,7 +374,6 @@ public class PlaceOrderFormController {
                     connection.setAutoCommit(true);
                     return false;
                 }
-
         }
 
         connection.commit();

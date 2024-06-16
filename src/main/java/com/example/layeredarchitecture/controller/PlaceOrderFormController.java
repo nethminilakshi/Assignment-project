@@ -346,9 +346,7 @@ public class PlaceOrderFormController {
                 connection.setAutoCommit(true);
                 return false;
             }
-
-
-                boolean isOrderSaved = orderDetailsDAO.saveOrderDetails(orderId, orderDetails);
+            boolean isOrderSaved = orderDetailsDAO.saveOrderDetails(orderId, orderDetails);
             if (!isOrderSaved) {
                 connection.rollback();
                 connection.setAutoCommit(true);
